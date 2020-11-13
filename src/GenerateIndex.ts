@@ -16,9 +16,9 @@ export default function GenerateIndex(dir: string) {
         // Extract url data
         const parts = path.split("/")
         const category = parts[2]
-        const filename = parts[5].split(".htm")[0]
-        //
-        console.log(`Processing ${filename}`)
+        const filename = parts[parts.length - 1].split(".htm")[0]
+
+        //console.log(`Processing ${filename}`)
         result.entities[filename] = {}
         if (!result.domains[category]) result.domains[category] = []
         result.domains[category].push(filename)

@@ -1,4 +1,5 @@
 import fs from "fs"
+import { downloadAndExtract } from "./download"
 import GenerateIndex from "./GenerateIndex"
 
 export var sentOptions = {
@@ -7,12 +8,23 @@ export var sentOptions = {
   sanitize: true,
   preserve_whitespace: false
 }
-const SCHEMA_PATH = "data/ifc4x2/schema/"
+const SCHEMA_VERSION = "ifc4x2"
+const SCHEMA_URL =
+  "http://standards.buildingsmart.org/IFC/DEV/IFC4_2/FINAL/IFC4_2-HTML.zip"
+const SCHEMA_PATH = `data/${SCHEMA_VERSION}/HTML/schema/`
 
-GenerateIndex(SCHEMA_PATH)
-  .then((index: any) => {
-    fs.writeFileSync("results/ifc4x2.json", JSON.stringify(index, null, 4))
-  })
-  .catch(err => {
-    console.warn(err)
-  })
+extractDocInfo(SCHEMA_VERSION, SCHEMA_URL, SCHEMA_PATH)
+
+function extractDocInfo(version: string, url: string, outputPath: string) {
+  downloadAndExtract(url, `data/${version}/`)
+    .then(() => GenerateIndex(outputPath))
+    .then((index: any) => {
+      fs.writeFileSync(
+        `results/${version}docs.json`,
+        JSON.stringify(index, null, 4)
+      )
+    })
+    .catch(err => {
+      console.warn(err)
+    })
+}
