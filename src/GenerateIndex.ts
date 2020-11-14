@@ -25,7 +25,6 @@ export default function GenerateIndex(version: string, dir: string) {
         result.domains[category].push(filename)
         try {
           const item: DocItem = ExtractEntityFromFile(path, filename)
-          console.log(item.name)
           result.entities[filename] = item
         } catch (error) {
           console.error(error.message)
