@@ -1,5 +1,4 @@
 import http from "http"
-import { resolve } from "path"
 import unzipper from "unzipper"
 
 export function downloadAndExtract(url: string, path: string) {
@@ -9,7 +8,7 @@ export function downloadAndExtract(url: string, path: string) {
         .pipe(unzipper.Extract({ path }))
         .promise()
         .then(() => {
-          console.log("finished zip")
+          console.log("Finished decompressing download")
           resolve()
         })
         .catch(reject)

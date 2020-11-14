@@ -2,12 +2,17 @@ import fs from "fs"
 import cheerio from "cheerio"
 import tokenizer from "sbd"
 import { DocItem } from "./DocItem"
-import { sentOptions } from "./index"
 
+const sentOptions = {
+  newline_boundaries: false,
+  html_boundaries: false,
+  sanitize: true,
+  preserve_whitespace: false
+}
 export default function ExtractEntityFromFile(
   path: string,
   fileName: string
-): [string, any] {
+): DocItem {
   const content = fs.readFileSync(path)
   const $ = cheerio.load(content, {
     ignoreWhitespace: true,
@@ -16,6 +21,7 @@ export default function ExtractEntityFromFile(
   // GET document body
   const body = $("html body")
   body.children("script").remove()
+  
   // Extract entity name
   const name = body.children("h4").text()
   if (!name) throw Error(`No name found on file: ${path}`)
@@ -23,6 +29,7 @@ export default function ExtractEntityFromFile(
     throw new Error(`${fileName}: Name '${name}' doesn't match`)
 
   let item: DocItem = {
+    name,
     path: "https://standards.buildingsmart.org/IFC/DEV/IFC4_2/FINAL/" + path
   }
   body.find("section").each((index, section) => {
@@ -80,5 +87,5 @@ export default function ExtractEntityFromFile(
   if (Object.keys(item).length === 0) {
     throw Error(`${fileName}: EMPTY ./` + path)
   }
-  return [name, item]
+  return item
 }
